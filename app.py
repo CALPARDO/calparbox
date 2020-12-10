@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import RPi.GPIO as GPIO
-import i2clcd
 from time import sleep
+import lcdlibrary
 
 app = Flask(__name__)
 
@@ -29,9 +29,6 @@ blue_pwm = GPIO.PWM(bluepin,100)
 red_pwm.start(0)
 green_pwm.start(0)
 blue_pwm.start(0)
-
-#lcd = i2clcd.i2clcd(i2c_bus=1, i2c_addr=0x27, lcd_width=16)
-#lcd.init()
 
 
 # Routes
@@ -103,14 +100,18 @@ def lcd():
         L1 = ' '
         L2 = ' '
 
-        L1 = request.form.get("L1",False)
-        L2 = request.form.get("L2",False)
+        lcd = lcdlibrary.lcd()
+        
+        L1 = raw_input(request.form.get("L1",False))
+        L2 = raw_input(request.form.get("L2",False))
+        
+        lcd.lcd_clear()
 
-        """lcd.print_line(L1, line=0)
-        sleep(.7)
-        lcd.print_line(L2, line=1)"""
-        print(type(L1))
-        print(L1)
+        lcd.lcd_display_string(L1,1)
+        sleep(0.7)
+        lcd.lcd_display_string(L2,2)
+
+        
 
     return render_template('lcd.html')
 
